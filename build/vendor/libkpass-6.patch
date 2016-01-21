@@ -1,0 +1,77 @@
+diff --git a/src/kpass.c b/src/kpass.c
+index 67fc43d..43a6bf5 100644
+--- a/src/kpass.c
++++ b/src/kpass.c
+@@ -28,13 +28,12 @@
+ #include <byteswap.h>
+ #elif HAVE_SYS_ENDIAN_H
+ #include <sys/endian.h>
++#elif __APPLE__
++#include "apple.h"
+ #else
+ #error "No source found for bswap. Good luck!"
+ #endif
+
+-#include <libintl.h>
+-#define _(String) dgettext (PACKAGE, String)
+-
+ #include "kpass.h"
+
+ /*
+@@ -151,23 +150,23 @@ char *kpass_strerror(kpass_retval retval) {
+ #endif
+ 	switch(retval) {
+ 		case kpass_success:
+-			return _("The operation was successful.");
++			return "The operation was successful.";
+ 		case kpass_decrypt_data_fail:
+-			return _("Database corrupt or bad password given.");
++			return "Database corrupt or bad password given.";
+ 		case kpass_load_decrypted_data_entry_fail:
+-			return _("Failed parsing corrupted entry.");
++			return "Failed parsing corrupted entry.";
+ 		case kpass_load_decrypted_data_group_fail:
+-			return _("Failed parsing corrupted group.");
++			return "Failed parsing corrupted group.";
+ 		case kpass_init_db_short:
+-			return _("Given data too short to contain database.");
++			return "Given data too short to contain database.";
+ 		case kpass_init_db_signature:
+-			return _("Signature doesn't match known value.");
++			return "Signature doesn't match known value.";
+ 		case kpass_pack_db_fail:
+-			return _("Packing database for encryption failed.");
++			return "Packing database for encryption failed.";
+ 		case kpass_unsupported_flag:
+-			return _("Database contains unsupported database flag.");
++			return "Database contains unsupported database flag.";
+ 		default:
+-			return _("Unrecognized return value.");
++			return "Unrecognized return value.";
+ 	}
+ }
+
+--- a/src/apple.h
++++ b/src/apple.h
+@@ -0,0 +1,21 @@
++#include <machine/endian.h>
++#include <libkern/OSByteOrder.h>
++
++#define htobe16(x) OSSwapHostToBigInt16(x)
++#define htole16(x) OSSwapHostToLittleInt16(x)
++#define be16toh(x) OSSwapBigToHostInt16(x)
++#define le16toh(x) OSSwapLittleToHostInt16(x)
++
++#define htobe32(x) OSSwapHostToBigInt32(x)
++#define htole32(x) OSSwapHostToLittleInt32(x)
++#define be32toh(x) OSSwapBigToHostInt32(x)
++#define le32toh(x) OSSwapLittleToHostInt32(x)
++
++#define htobe64(x) OSSwapHostToBigInt64(x)
++#define htole64(x) OSSwapHostToLittleInt64(x)
++#define be64toh(x) OSSwapBigToHostInt64(x)
++#define le64toh(x) OSSwapLittleToHostInt64(x)
++
++#define __BIG_ENDIAN    BIG_ENDIAN
++#define __LITTLE_ENDIAN LITTLE_ENDIAN
++#define __BYTE_ORDER    BYTE_ORDER
