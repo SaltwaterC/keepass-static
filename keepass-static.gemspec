@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'keepass-static'
-  s.version = '0.0.2'
+  s.version = '0.0.3'
   s.licenses = %w(MIT)
   s.summary = 'Ruby bindings to libkpass as static built native extensions'
   s.description = s.summary + ' ' # makes gem build STFU

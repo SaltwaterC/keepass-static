@@ -314,6 +314,7 @@ _create_ruby_entry(kpass_entry *entry)
 	rb_ivar_set(rb_entry, rb_intern("@guid"), INT2NUM(entry->group_id));
 	rb_ivar_set(rb_entry, rb_intern("@notes"), rb_str_new_cstr(entry->notes));
 	rb_ivar_set(rb_entry, rb_intern("@description"), rb_str_new_cstr(entry->desc));
+  rb_ivar_set(rb_entry, rb_intern("@data"), rb_str_new_cstr(entry->data));
     _set_time(rb_entry, "@mtime", entry->mtime);
     _set_time(rb_entry, "@ctime", entry->ctime);
     _set_time(rb_entry, "@atime", entry->atime);
@@ -526,6 +527,17 @@ rb_kp_entry_description(VALUE self)
 }
 
 /*
+ * Document-method: data
+ *
+ * Returns the data of this entry.
+ */
+VALUE
+rb_kp_entry_data(VALUE self)
+{
+    return rb_ivar_get(self, rb_intern("@data"));
+}
+
+/*
  * Document-method: mtime
  *
  * Returns the modification time of this entry.
@@ -665,4 +677,5 @@ Init_keepass(void)
 	rb_define_method(cEntry, "guid", rb_kp_entry_guid, 0);
 	rb_define_method(cEntry, "notes", rb_kp_entry_notes, 0);
 	rb_define_method(cEntry, "description", rb_kp_entry_description, 0);
+  rb_define_method(cEntry, "data", rb_kp_entry_data, 0);
 }
