@@ -1,5 +1,3 @@
-require_relative 'lib/system'
-
 nv = '3.1'
 kv = '6'
 
@@ -49,11 +47,8 @@ end
 
 desc 'Build OS X bundle natively and Linux so in a Docker container'
 task :build do
-  binlib_path = "lib/#{KEEPASS_RVER}/#{KEEPASS_ARCH}"
-  mkdir_p binlib_path
-
-  bundle_name = "#{binlib_path}/keepass.bundle"
-  so_name = "#{binlib_path}/keepass.so"
+  bundle_name = 'lib/keepass.bundle'
+  so_name = 'lib/keepass.so'
 
   Rake::Task['vendor'].invoke unless File.exist?(bundle_name)
   mv('build/keepass.bundle', bundle_name) unless File.exist?(bundle_name)
@@ -64,6 +59,8 @@ task :build do
     system 'docker cp keepass-static:/root/build/keepass.so .'
     mv 'keepass.so', so_name
   end
+
+  system 'gem build keepass-static.gemspec'
 end
 
 desc 'Remove temporary build files'
@@ -75,11 +72,12 @@ task :clean do
   rm_f 'build/Makefile'
   rm_f 'build/keepass.o'
   rm_f 'build/keepass.bundle'
+  rm_f Dir.glob 'keepass-static-*.gem'
   system 'docker rm keepass-static; docker rmi keepass-static' if Gem::Platform.local.os == 'darwin'
 end
 
 desc 'Remove build artifacts and temporary files'
 task clean_all: [:clean] do
-  rm_f "keepass.#{KEEPASS_RVER}.#{KEEPASS_ARCH}.bundle"
-  rm_f "keepass.#{KEEPASS_RVER}.#{KEEPASS_ARCH}.so"
+  rm_f 'lib/keepass.bundle'
+  rm_f 'lib/keepass.so'
 end

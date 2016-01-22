@@ -1,5 +1,3 @@
-require_relative 'lib/system'
-
 Gem::Specification.new do |s|
   s.name = 'keepass-static'
   s.version = '0.0.2'
@@ -8,6 +6,6 @@ Gem::Specification.new do |s|
   s.description = s.summary + ' ' # makes gem build STFU
   s.authors = ['Stefan Rusu']
   s.email = 'saltwaterc@gmail.com'
-  s.files = Dir.glob('lib/*.rb') + Dir.glob("lib/#{KEEPASS_RVER}/#{KEEPASS_ARCH}/keepass.*")
+  s.files = Dir.glob('lib/*.rb') + Dir.glob('lib/keepass.*')
   s.homepage = 'https://github.com/SaltwaterC/keepass-static'
 end
