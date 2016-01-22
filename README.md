@@ -8,7 +8,7 @@ Building the original extension is not an issue with keepass itself. The problem
 
 The initial implementation used to bundle libnettle.a and libkpass.a for linking Ruby's module to these static libs. However, it still required gcc, make, etc. (the whole shebang) even on targets where having these just for one library is not ideal. They are also fairly large compared to Ruby's native extensions. The only thing that's lost in this process is the potential issues with Ruby ABI. It's still possible to implement another build using this idea to work with multiple minor versions of Ruby.
 
-The next step was to bundle the native Ruby extension by itself and skip the whole drama. Fat gems to the rescue. A Ruby wrapper handles the appropriate extension loading. By itself this project doesn't bring a lot of things except for usability and OS X support for libkpass.
+The next step was to bundle the native Ruby extension by itself and skip the whole drama. Fat gems to the rescue. A Ruby wrapper handles the appropriate extension loading. By itself this project doesn't bring a lot of things except for usability and OS X support for libkpass. libgettext support was removed from libkpass to simplify the dependency tree.
 
 ## System requirements
 
