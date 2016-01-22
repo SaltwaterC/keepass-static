@@ -25,4 +25,4 @@ distribution of KeePass Ruby bindings in binary form. The rest of the code is
 copyrighted by their respective owners.
 
 nettle is licensed under GPLv3+ or LGPLv2+
-libkpass is licensed udenr GPLv3
+libkpass is licensed under GPLv3
