@@ -1,3 +1,5 @@
+# extconf based on http://blog.zachallett.com/howto-ruby-c-extension-with-a-static-library/
+
 require 'mkmf'
 
 LIBDIR     = RbConfig::CONFIG['libdir']
