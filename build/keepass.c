@@ -314,7 +314,7 @@ _create_ruby_entry(kpass_entry *entry)
 	rb_ivar_set(rb_entry, rb_intern("@guid"), INT2NUM(entry->group_id));
 	rb_ivar_set(rb_entry, rb_intern("@notes"), rb_str_new_cstr(entry->notes));
 	rb_ivar_set(rb_entry, rb_intern("@description"), rb_str_new_cstr(entry->desc));
-  rb_ivar_set(rb_entry, rb_intern("@data"), rb_str_new_cstr(entry->data));
+  rb_ivar_set(rb_entry, rb_intern("@data"), rb_str_new(entry->data, entry->data_len));
     _set_time(rb_entry, "@mtime", entry->mtime);
     _set_time(rb_entry, "@ctime", entry->ctime);
     _set_time(rb_entry, "@atime", entry->atime);

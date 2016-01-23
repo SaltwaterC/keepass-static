@@ -44,8 +44,8 @@ Install the gem under a supported platform.
 require 'keepass-static'
 
 # functionality specific for upstream extension
-kdb = Keepass::Database.new 'database.kdb', 'password' # creates a new KeePass database
-kdb = Keepass::Database.open 'database.kdb', 'password' # opens an existing KeePass database
+kdb = Keepass::Database.new 'database.kdb', 'password' # open KeePass database
+kdb = Keepass::Database.open 'database.kdb', 'password' # alias for new
 
 # array listing all the database groups
 kdb.groups
