@@ -90,7 +90,7 @@ task :clean do
 end
 
 desc 'Remove build artifacts and temporary files'
-task clean_all: [:clean] do
+task cleanall: [:clean] do
   rm_f 'lib/keepass.bundle'
   rm_f 'lib/keepass.so'
 end
