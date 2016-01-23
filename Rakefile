@@ -1,3 +1,5 @@
+require 'rake/testtask'
+
 nv = '3.1'
 kv = '6'
 
@@ -43,6 +45,8 @@ task :vendor do
 
     system 'strip --strip-unneeded keepass.so' if Gem::Platform.local.os == 'linux'
   end
+
+  Rake::Task['test'].invoke
 end
 
 desc 'Build OS X bundle natively and Linux so in a Docker container'
@@ -72,6 +76,7 @@ task :clean do
   rm_f 'build/Makefile'
   rm_f 'build/keepass.o'
   rm_f 'build/keepass.bundle'
+  rm_f 'build/keepass.so'
   rm_f Dir.glob 'keepass-static-*.gem'
   system 'docker rm keepass-static; docker rmi keepass-static' if Gem::Platform.local.os == 'darwin'
 end
@@ -80,4 +85,9 @@ desc 'Remove build artifacts and temporary files'
 task clean_all: [:clean] do
   rm_f 'lib/keepass.bundle'
   rm_f 'lib/keepass.so'
+end
+
+Rake::TestTask.new do |t|
+  t.libs       = %w(build)
+  t.test_files = Dir.glob('test/*.rb')
 end
