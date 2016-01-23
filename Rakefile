@@ -8,7 +8,9 @@ task :vendor do
   buildflags = ''
   # Linux requires position independent code to link to static libs
   # undefined symbol: rpl_malloc is another issue
-  buildflags = 'CFLAGS=-fPIC ac_cv_func_malloc_0_nonnull=yes' if Gem::Platform.local.os == 'linux'
+  if Gem::Platform.local.os == 'linux'
+    buildflags = 'CFLAGS=-fPIC ac_cv_func_malloc_0_nonnull=yes'
+  end
 
   Dir.chdir('build') do
     Dir.chdir('vendor') do
@@ -24,7 +26,9 @@ task :vendor do
 
       Dir.chdir("libkpass-#{kv}") do
         system "patch -p1 < ../libkpass-#{kv}.patch"
-        buildcmd = "#{buildflags} LDFLAGS=-L../nettle-#{nv} CPPFLAGS=-I../nettle-#{nv}/include ./configure --prefix=\$(pwd) && make install"
+        buildcmd = "#{buildflags} LDFLAGS=-L../nettle-#{nv} "\
+          "CPPFLAGS=-I../nettle-#{nv}/include ./configure --prefix=\$(pwd) && "\
+          'make install'
         puts "Run buildcmd #{buildcmd}"
         system buildcmd
       end
@@ -43,7 +47,9 @@ task :vendor do
     system 'ruby extconf.rb'
     system 'make'
 
-    system 'strip --strip-unneeded keepass.so' if Gem::Platform.local.os == 'linux'
+    if Gem::Platform.local.os == 'linux'
+      system 'strip --strip-unneeded keepass.so'
+    end
   end
 
   Rake::Task['test'].invoke
@@ -78,7 +84,9 @@ task :clean do
   rm_f 'build/keepass.bundle'
   rm_f 'build/keepass.so'
   rm_f Dir.glob 'keepass-static-*.gem'
-  system 'docker rm keepass-static; docker rmi keepass-static' if Gem::Platform.local.os == 'darwin'
+  if Gem::Platform.local.os == 'darwin'
+    system 'docker rm keepass-static; docker rmi keepass-static'
+  end
 end
 
 desc 'Remove build artifacts and temporary files'
@@ -88,6 +96,17 @@ task clean_all: [:clean] do
 end
 
 Rake::TestTask.new do |t|
-  t.libs       = %w(build)
+  t.libs       = %w(build lib)
   t.test_files = Dir.glob('test/*.rb')
 end
+
+begin
+  # Rubocop stuff
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+rescue LoadError
+  STDERR.puts 'Rubocop, or one of its dependencies, is not available.'
+end
+
+desc 'Runs all testing tools'
+task testall: [:test, :rubocop]
