@@ -41,7 +41,7 @@ task :vendor do
     elsif File.exist?("vendor/nettle-#{nv}/lib64/libnettle.a")
       cp "vendor/nettle-#{nv}/lib64/libnettle.a", '.'
     else
-      fail "Unable to find vendor/nettle-#{nv}/lib/libnettle.a"
+      raise "Unable to find vendor/nettle-#{nv}/lib/libnettle.a"
     end
 
     cp "vendor/libkpass-#{kv}/lib/libkpass.a", '.'
@@ -49,9 +49,7 @@ task :vendor do
     sh 'ruby extconf.rb'
     sh 'make'
 
-    if Gem::Platform.local.os == 'linux'
-      sh 'strip --strip-unneeded keepass.so'
-    end
+    sh 'strip --strip-unneeded keepass.so' if Gem::Platform.local.os == 'linux'
   end
 
   Rake::Task['test'].invoke
