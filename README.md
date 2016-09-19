@@ -12,13 +12,13 @@ The next step was to bundle the native Ruby extension by itself and skip the who
 
 ## System requirements
 
- * Ruby 2.1.x
+ * Ruby 2.1.x or Ruby 2.3.x (planned)
  * Linux 2.6.x
- * OS X 10.10.x
+ * OS X 10.11.x (may work under previous releases, untested)
 
-Ruby 2.1.x is required as I work with Chef. Whatever ChefDK is offering as embedded Ruby, is the only version that's going to be supported. Everything else is extra.
+As I'm using ChefDK for virtually all of my Ruby development (i.e not limited to Chef development), this gem only supports 2.1.x (embedded up until Chef 12.13.x). There's planned support for 2.3.x (embedded since Chef 12.14.x).
 
-While experiments proved that the extensions by themselves are ABI compatible with Ruby 2.0 and 2.2, there's **no guarantees** that they work as advertised.
+While experiments proved that the extensions by themselves are ABI compatible with Ruby 2.0 and 2.2, there's **no guarantees** that they would work as advertised.
 
 Ruby 2.0 and 2.2 requires you to link to the appropriate libruby:
 
@@ -28,13 +28,13 @@ Ruby 2.0 and 2.2 requires you to link to the appropriate libruby:
 sudo ln -s /usr/lib64/libruby.so.2.0 /usr/lib64/libruby.so.2.1
 ```
 
-Ruby 2.3.x is not ABI compatible with 2.1.x (`undefined symbol: rb_data_object_alloc`).
+The Linux extension was built under CentOS 7.2, tested under Ubuntu 15.10, and Amazon Linux. The Linux builds are handled by Docker containers running CentOS 7.2.
 
-The Linux extension was built under CentOS 6.7, tested under Centos 7, Ubuntu 14.04, Ubuntu 15.10, and Amazon Linux.
+The OS X extension was built under OS X 10.11 (El Capitan). The build process used to be fully automated, but supporting multiple Ruby versions under OS X can not be easily achieved due to the absolute rubbish dynamic library loader that OS X is having.
 
-The OS X extension was built under OS X 10.10 (Yosemite), tested under OS X 10.11 (El Capitan).
+Essentially, a dynamic library is married to its disk path at build time. Both the ruby binary and the bundles are linked against libruby. However, if the disk path is different, but the libruby version is the same, loading the bundle would still throw an incompatible library version error, even though the ruby library already has libruby loaded in memory.
 
-Please note that OS X, ChefDK, Docker is required for building the extensions from source. The CentOS 6.7 build is handled by a Docker container.
+This may be fixed by declaring DYLD_LIBRARY_PATH, telling the lib loader to look into the path from where it already loaded libruby, but this environment variable can't be altered at runtime (i.e by declaring ENV['DYLD_LIBRARY_PATH'] with the appropriate value before requiring the bundle). It would take more time to fix the automation than it's worth, therefore the native Ruby extensions are shoved into GitHub and baked into the gem when the gem is being built.
 
 ## How to use
 

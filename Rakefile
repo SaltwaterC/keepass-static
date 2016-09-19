@@ -1,6 +1,6 @@
 require 'rake/testtask'
 
-nv = '3.1'
+nv = '3.2'
 kv = '6'
 
 desc 'Build vendor libraries and native extension'
@@ -16,21 +16,21 @@ task :vendor do
     Dir.chdir('vendor') do
       rm_rf "nettle-#{nv}"
       rm_rf "libkpass-#{kv}"
-      system "tar -xf nettle-#{nv}.tar.gz && tar -xf libkpass-#{kv}.tar.gz"
+      sh "tar -xf nettle-#{nv}.tar.gz && tar -xf libkpass-#{kv}.tar.gz"
 
       Dir.chdir("nettle-#{nv}") do
         buildcmd = "#{buildflags} ./configure --prefix=\$(pwd) && make install"
         puts "Run buildcmd #{buildcmd}"
-        system buildcmd
+        sh buildcmd
       end
 
       Dir.chdir("libkpass-#{kv}") do
-        system "patch -p1 < ../libkpass-#{kv}.patch"
+        sh "patch -p1 < ../libkpass-#{kv}.patch"
         buildcmd = "#{buildflags} LDFLAGS=-L../nettle-#{nv} "\
           "CPPFLAGS=-I../nettle-#{nv}/include ./configure --prefix=\$(pwd) && "\
           'make install'
         puts "Run buildcmd #{buildcmd}"
-        system buildcmd
+        sh buildcmd
       end
     end
 
@@ -44,33 +44,28 @@ task :vendor do
 
     cp "vendor/libkpass-#{kv}/lib/libkpass.a", '.'
 
-    system 'ruby extconf.rb'
-    system 'make'
+    sh 'ruby extconf.rb'
+    sh 'make'
 
     if Gem::Platform.local.os == 'linux'
-      system 'strip --strip-unneeded keepass.so'
+      sh 'strip --strip-unneeded keepass.so'
     end
   end
 
   Rake::Task['test'].invoke
 end
 
+desc 'Build vendor libraries and native extension in Docker container'
+task :dockervendor do
+  sh "docker build -t keepass-static -f Dockerfile-#{ENV['ver']} ."
+  sh 'docker run --name keepass-static keepass-static'
+  sh 'docker cp keepass-static:/root/build/keepass.so build/keepass.so'
+end
+
 desc 'Build OS X bundle natively and Linux so in a Docker container'
 task :build do
-  bundle_name = 'lib/keepass.bundle'
-  so_name = 'lib/keepass.so'
-
-  Rake::Task['vendor'].invoke unless File.exist?(bundle_name)
-  mv('build/keepass.bundle', bundle_name) unless File.exist?(bundle_name)
-
-  unless File.exist?(so_name)
-    system 'docker build -t keepass-static .'
-    system 'docker run --name keepass-static keepass-static'
-    system 'docker cp keepass-static:/root/build/keepass.so .'
-    mv 'keepass.so', so_name
-  end
-
-  system 'gem build keepass-static.gemspec'
+  cp_r 'binary/2.1', 'lib'
+  sh 'gem build keepass-static.gemspec'
 end
 
 desc 'Remove temporary build files'
@@ -83,6 +78,7 @@ task :clean do
   rm_f 'build/keepass.o'
   rm_f 'build/keepass.bundle'
   rm_f 'build/keepass.so'
+  rm_rf 'lib/2.1'
   rm_f Dir.glob 'keepass-static-*.gem'
   if Gem::Platform.local.os == 'darwin'
     system 'docker rm keepass-static; docker rmi keepass-static'
