@@ -1,5 +1,7 @@
 require 'rake/testtask'
 
+require_relative 'lib/keepass-util'
+
 nv = '3.2'
 kv = '6'
 
@@ -60,6 +62,16 @@ task :dockervendor do
   sh "docker build -t keepass-static -f Dockerfile-#{ENV['ver']} ."
   sh 'docker run --name keepass-static keepass-static'
   sh 'docker cp keepass-static:/root/build/keepass.so build/keepass.so'
+end
+
+desc 'Copies the built binaries to the correct path'
+task :copy do
+  ver = ruby_version
+  path = "binary/#{ver[:major]}.#{ver[:minor]}"
+
+  mkdir_p 'binary/2.1'
+  cp 'build/keepass.bundle', path
+  cp 'build/keepass.so', path
 end
 
 desc 'Build OS X bundle natively and Linux so in a Docker container'

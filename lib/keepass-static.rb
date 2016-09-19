@@ -1,4 +1,6 @@
-ver = RUBY_VERSION.split '.'
+require_relative 'keepass-util'
 
-require_relative "#{ver[0]}.#{ver[1]}/keepass"
+ver = ruby_version
+
+require_relative "#{ver[:major]}.#{ver[:minor]}/keepass"
 require_relative 'keepass-methods'
