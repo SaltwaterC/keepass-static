@@ -1,5 +1,5 @@
 ## v0.1.0
- * Planned support for multiple versions of Ruby (2.1.x, 2.3.x)
+ * Support for multiple versions of Ruby (2.1.x, 2.3.x)
  * Refresh the build environment.
 
 ## v0.0.4
