@@ -68,13 +68,15 @@ task :copy do
   path = "binary/#{ver[:major]}.#{ver[:minor]}"
 
   mkdir_p 'binary/2.1'
+  mkdir_p 'binary/2.3'
   cp 'build/keepass.bundle', path
   cp 'build/keepass.so', path
 end
 
-desc 'Build OS X bundle natively and Linux so in a Docker container'
+desc 'Build the gem using the pre-built binaries from binary dir'
 task :build do
   cp_r 'binary/2.1', 'lib'
+  cp_r 'binary/2.3', 'lib'
   sh 'gem build keepass-static.gemspec'
 end
 
@@ -89,6 +91,7 @@ task :clean do
   rm_f 'build/keepass.bundle'
   rm_f 'build/keepass.so'
   rm_rf 'lib/2.1'
+  rm_rf 'lib/2.3'
   rm_f Dir.glob 'keepass-static-*.gem'
   if Gem::Platform.local.os == 'darwin'
     system 'docker rm keepass-static; docker rmi keepass-static'
