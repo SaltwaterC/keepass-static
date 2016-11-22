@@ -75,8 +75,7 @@ end
 
 desc 'Build the gem using the pre-built binaries from binary dir'
 task :build do
-  cp_r 'binary/2.1', 'lib'
-  cp_r 'binary/2.3', 'lib'
+  cp_r Dir['binary/*'], 'lib'
   sh 'gem build keepass-static.gemspec'
 end
 

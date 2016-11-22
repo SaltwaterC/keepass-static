@@ -13,7 +13,7 @@ The next step was to bundle the native Ruby extension by itself and skip the who
 ## System requirements
 
  * Ruby 2.1.x or Ruby 2.3.x
- * Linux 2.6.x
+ * Linux 2.6.x / Raspbian (Only Ruby 2.3.x support)
  * OS X 10.11.x (may work under previous releases, untested)
 
 As I'm using ChefDK for virtually all of my Ruby development (i.e not limited to Chef development), this gem only supports 2.1.x (embedded up until Chef 12.13.x) or 2.3.x (embedded since Chef 12.14.x).

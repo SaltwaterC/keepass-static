@@ -7,3 +7,16 @@ def ruby_version
     tiny: arr[2].to_i
   }
 end
+
+def ruby_platform
+  arr = RUBY_PLATFORM.split '-'
+
+  platform = {
+    arch: arr[0],
+    os: arr[1]
+  }
+
+  platform[:abi] = arr[2] if arr[2]
+
+  platform
+end

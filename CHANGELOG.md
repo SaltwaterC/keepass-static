@@ -1,3 +1,6 @@
+## v0.1.1
+ * Add armv7l Ruby 2.3.x library for Raspberry Pi
+
 ## v0.1.0
  * Support for multiple versions of Ruby (2.1.x, 2.3.x)
  * Refresh the build environment.
